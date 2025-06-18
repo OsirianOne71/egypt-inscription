@@ -91,33 +91,42 @@ shadow = (max(BG[0] - 30, 0), max(BG[1] - 30, 0), max(BG[2] - 30, 0))
 highlight = (min(BG[0] + 20, 255), min(BG[1] + 20, 255), min(BG[2] + 20, 255))
 carved_color = tuple(max(c - 15, 0) for c in BG)
 
+# Draw glyphs with carved effect
 if DIRECTION == "horizontal":
     x = PADDING
     for i, glyph in enumerate(GLYPHS):
         bbox = glyph_bboxes[i]
         w = glyph_widths[i]
         h = glyph_heights[i]
-        y = (H - h) // 2 - bbox[1]
-        draw.text((x + 2, y + 2), glyph, fill=shadow, font=font)
-        draw.text((x - 2, y - 2), glyph, fill=highlight, font=font)
-        draw.text((x, y), glyph, fill=carved_color, font=font)
-        x += w + PADDING
-else:
-    y = PADDING
-for i, glyph in enumerate(GLYPHS):
-    bbox = font.getbbox(glyph)
-    w = bbox[2] - bbox[0]
-    h = bbox[3] - bbox[1]
-    x = (W - w) // 2 - bbox[0]
-    offset_y = y - bbox[1]  # shift to baseline based on top bearing
+        y = (H - h) // 2 - bbox[1]  # baseline position adjusted by top bearing
 
-    draw.text((x - 2, offset_y - 2), glyph, fill=shadow, font=font) # shadow
-    draw.text((x + 2, offset_y + 2), glyph, fill=highlight, font=font) # highlight
-    draw.text((x, offset_y), glyph, fill=carved_color, font=font) # main glyph
-    
-    y += h + PADDING
-    if i < len(GLYPHS) - 1:
-        y += PADDING
+        # Draw shadow (2 px up-left)
+        draw.text((x - 2, y - 2), glyph, fill=shadow, font=font)
+        # Draw highlight (2 px down-right)
+        draw.text((x + 2, y + 2), glyph, fill=highlight, font=font)
+        # Draw main glyph
+        draw.text((x, y), glyph, fill=BG, font=font)
+
+        # Increment x position for the next glyph
+        x += w + PADDING
+
+elif DIRECTION == "vertical":
+    y = PADDING
+    for i, glyph in enumerate(GLYPHS):
+        bbox = glyph_bboxes[i]
+        w = glyph_widths[i]
+        h = glyph_heights[i]
+        x = (W - w) // 2 - bbox[0]  # horizontally center, adjusted by left bearing
+
+        # Draw shadow (2 px up-left)
+        draw.text((x - 2, y - 2 - bbox[1]), glyph, fill=shadow, font=font)
+        # Draw highlight (2 px down-right)
+        draw.text((x + 2, y + 2 - bbox[1]), glyph, fill=highlight, font=font)
+        # Draw main glyph
+        draw.text((x, y - bbox[1]), glyph, fill=BG, font=font)
+
+        # Increment y position for the next glyph
+        y += h + PADDING
 
 img.save(output_file)
 print(f"Image saved as {output_file}")

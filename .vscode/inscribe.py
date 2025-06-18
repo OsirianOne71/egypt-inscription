@@ -8,7 +8,7 @@ PADDING  = 60               # space around glyphs
 
 # User input values
 DIRECTION = "vertical"    # "vertical" or "horizontal"
-GLYPHS = list("𓏙𓋹𓎃𓌀𓍑𓋴𓊽")
+GLYPHS = list("𓏙𓋹𓊽𓌀𓎃𓍑𓋴𓆖")
 # User input values end
 
 font = ImageFont.truetype(FONT, SIZE)
